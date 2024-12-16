@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPFS Encryption and Decryption</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>IPFS Encryption and Decryption</h1>
+    <div class="form-group">
+      <textarea id="userInput" placeholder="Enter your message here"></textarea>
+      <button id="encryptAndStore">Encrypt & Store in IPFS</button>
+    </div>
+    <div class="result">
+      <h3>IPFS Hash:</h3>
+      <p id="ipfsHash">No data uploaded yet.</p>
+    </div>
+    <div class="form-group">
+      <input type="text" id="retrieveHash" placeholder="Enter IPFS hash to retrieve data">
+      <button id="retrieveAndDecrypt">Retrieve & Decrypt</button>
+    </div>
+    <div class="result">
+      <h3>Decrypted Message:</h3>
+      <p id="decryptedMessage">No message retrieved yet.</p>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
