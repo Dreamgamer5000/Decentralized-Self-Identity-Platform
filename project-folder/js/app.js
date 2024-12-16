@@ -1,91 +1,87 @@
-// Importing IPFS HTTP client
-import { create } from 'ipfs-http-client';
+import { create } from "ipfs-http-client";
+import crypto from "crypto";
 
 // Create an IPFS client instance
-const ipfs = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
-
-// AES Encryption & Decryption Functions
-const crypto = window.crypto.subtle;
+const ipfs = create({ host: "ipfs.infura.io", port: 5001, protocol: "https" });
 
 // Generate a random AES-256 key
-async function generateKey() {
-  return crypto.generateKey(
-    { name: "AES-CBC", length: 256 },
-    true,
-    ["encrypt", "decrypt"]
-  );
+function generateKey() {
+  return crypto.randomBytes(32); // 256-bit key
 }
 
-// Encrypt a message using AES-256
-async function encryptData(key, message) {
-  const iv = window.crypto.getRandomValues(new Uint8Array(16)); // Initialization Vector
-  const encodedMessage = new TextEncoder().encode(message);
-  const encrypted = await crypto.encrypt(
-    { name: "AES-CBC", iv },
-    key,
-    encodedMessage
-  );
+// Encrypt data using AES-256-CBC
+function encryptData(key, message) {
+  const iv = crypto.randomBytes(16); // 16-byte IV
+  const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+  const encrypted = Buffer.concat([
+    cipher.update(message, "utf8"),
+    cipher.final(),
+  ]);
   return { encryptedData: encrypted, iv };
 }
 
-// Decrypt data using AES-256
-async function decryptData(key, encryptedData, iv) {
-  const decrypted = await crypto.decrypt(
-    { name: "AES-CBC", iv },
-    key,
-    encryptedData
-  );
-  return new TextDecoder().decode(decrypted);
+// Decrypt data using AES-256-CBC
+function decryptData(key, encryptedData, iv) {
+  const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
+  const decrypted = Buffer.concat([
+    decipher.update(encryptedData),
+    decipher.final(),
+  ]);
+  return decrypted.toString("utf8");
 }
 
 // Encrypt and Store Data in IPFS
-document.getElementById('encryptAndStore').addEventListener('click', async () => {
-  const userInput = document.getElementById('userInput').value;
+async function encryptAndStore() {
+  const userInput = "Your secret message here!";
 
   if (!userInput) {
-    alert("Please enter a message to encrypt.");
+    console.error("No message provided.");
     return;
   }
 
-  const key = await generateKey();
-  const { encryptedData, iv } = await encryptData(key, userInput);
+  const key = generateKey();
+  const { encryptedData, iv } = encryptData(key, userInput);
 
-  // Convert encrypted data to a Uint8Array for IPFS
-  const buffer = new Uint8Array(encryptedData);
-  const ipfsResult = await ipfs.add(buffer);
+  // Upload encrypted data to IPFS
+  const ipfsResult = await ipfs.add(encryptedData);
+  console.log("IPFS Hash:", ipfsResult.path);
 
-  // Display IPFS hash
-  document.getElementById('ipfsHash').textContent = ipfsResult.path;
+  // Log key and IV for demo purposes (not secure for production!)
+  console.log("Encryption Key:", key.toString("hex"));
+  console.log("Initialization Vector (IV):", iv.toString("hex"));
 
-  // Store the key and IV securely (for demo purposes, we log them here)
-  console.log("Encryption Key (for demo only):", key);
-  console.log("Initialization Vector (IV):", iv);
-});
+  return { ipfsHash: ipfsResult.path, key, iv };
+}
 
 // Retrieve and Decrypt Data from IPFS
-document.getElementById('retrieveAndDecrypt').addEventListener('click', async () => {
-  const hash = document.getElementById('retrieveHash').value;
-
-  if (!hash) {
-    alert("Please enter an IPFS hash to retrieve data.");
+async function retrieveAndDecrypt(ipfsHash, key, iv) {
+  if (!ipfsHash) {
+    console.error("No IPFS hash provided.");
     return;
   }
 
   try {
-    const encryptedFile = [];
-    for await (const chunk of ipfs.cat(hash)) {
-      encryptedFile.push(chunk);
+    const chunks = [];
+    for await (const chunk of ipfs.cat(ipfsHash)) {
+      chunks.push(chunk);
     }
-    const encryptedData = new Uint8Array(encryptedFile).buffer;
+    const encryptedData = Buffer.concat(chunks);
 
-    // Key and IV retrieval (for demo purposes, replace with actual key storage mechanism)
-    const key = await generateKey(); // Replace with stored key
-    const iv = window.crypto.getRandomValues(new Uint8Array(16)); // Replace with stored IV
-
-    const decryptedMessage = await decryptData(key, encryptedData, iv);
-    document.getElementById('decryptedMessage').textContent = decryptedMessage;
+    const decryptedMessage = decryptData(key, encryptedData, iv);
+    console.log("Decrypted Message:", decryptedMessage);
+    return decryptedMessage;
   } catch (error) {
-    console.error(error);
-    alert("Failed to retrieve or decrypt data.");
+    console.error("Error retrieving or decrypting data:", error);
   }
-});
+}
+
+// Example Usage
+(async () => {
+  // Encrypt and store data
+  const { ipfsHash, key, iv } = await encryptAndStore();
+
+  // Retrieve and decrypt data
+  if (ipfsHash) {
+    await retrieveAndDecrypt(ipfsHash, key, iv);
+  }
+})();
