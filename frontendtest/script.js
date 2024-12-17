@@ -15,86 +15,21 @@ function generateRandomHex(length) {
 }
 
 
-// Function to simulate retrieving encrypted data and generating/storing keys
-async function retrieveEncryptedData(userAddress, dataType) {
-    console.log("Retrieving encrypted data...");
-
-    // Replace this with actual blockchain interaction logic
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const keyLength = userAddress.length; // Match key length to user address length
-            const publicKey = generateRandomHex(keyLength); // Random public key
-            const signedMsg = generateRandomHex(keyLength); // Random Signed Message
-
-            // Store these keys in the database (mock)
-            database[userAddress] = {
-                publicKey,
-                signedMsg,
-                dataType
-            };
-
-            const encryptedData = ` Encrypted message: ${signedMsg}`;
-            resolve({ encryptedData });
-        }, 1000);
-    });
-}
-
-// Function to simulate decrypting data by validating public/Signed Messages
-function decryptData(encryptedData, signedMsgInput, publicKeyInput, userAddress) {
-    console.log("Decrypting data...");
-
-    // Retrieve stored keys from the mock database
-    const storedKeys = database[userAddress];
-    if (!storedKeys) {
-        return "Error: No data found for the given user address!";
-    }
-
-    const { publicKey: storedPublicKey, signedMsg: storedsignedMsg } = storedKeys;
-
-    // Validate public and Signed Messages
-    if (publicKeyInput !== storedPublicKey) {
-        return "Error: Public key does not match the stored public key!";
-    }
-    if (signedMsgInput !== storedsignedMsg) {
-        return "Error: Signed Message does not match the stored Signed Message!";
-    }
-
-    return `Decrypted: Data successfully validated and decrypted for ${userAddress}\n${database[userAddress].dataType}`;
-}
-
 // Event listener for retrieving encrypted data
-document.getElementById("retrieveHash").addEventListener("click", async () => {
+document.getElementById("encryptData").addEventListener("click", async () => {
     const userAddress = document.getElementById("userAddress").value;
     const dataType = document.getElementById("dataType").value;
-
+    const encryptedData = generateRandomHex(42);
     // Validate input fields
     if (!userAddress || !dataType) {
         alert("Please fill in all fields.");
         return;
     }
-
-    const { encryptedData } = await retrieveEncryptedData(userAddress, dataType);
-
     // Display the encrypted data (do not auto-fill the public key)
     document.getElementById("output").textContent = encryptedData;
 });
 
-// Event listener for decrypting data
-document.getElementById("decryptData").addEventListener("click", () => {
-    const userAddress = document.getElementById("userAddress").value;
-    const signedMsgInput = document.getElementById("signedMsg").value;
-    const publicKeyInput = document.getElementById("publicKey").value;
-    const encryptedData = document.getElementById("output").textContent;
 
-    if (encryptedData === "No data retrieved yet.") {
-        alert("No data to decrypt. Please retrieve data first.");
-        return;
-    }
-
-    // Decrypt data by validating the keys
-    const decryptedData = decryptData(encryptedData, signedMsgInput, publicKeyInput, userAddress);
-    document.getElementById("output").textContent = decryptedData;
-});
 
 const IPFShash = generateRandomHex(42);
 // Event listener for clearing all fields
@@ -102,8 +37,32 @@ document.getElementById("clearFields").addEventListener("click", () => {
     document.getElementById("userAddress").value = "";
     document.getElementById("dataType").value = "";
     document.getElementById("publicKey").value = "";
-    document.getElementById("signedMsg").value = "";
     document.getElementById("output").textContent = IPFShash;
 
     document.getElementById("output-heading").innerText = "IPFS HASH:"
+});
+
+// Event listener for decrypting data
+document.getElementById("encryptHashKey").addEventListener("click", () => {
+
+    document.getElementById("publicKey").textContent = generateRandomHex(42);
+    const arrowFunc = () => {
+        const hexString = "0x54843cc9cceaff05f307f1790047b44dd36d49e7a9"; // Example hex string
+        const hexChars = "0123456789abcdef"; // Hexadecimal character set
+    
+        // Remove the "0x" prefix and process each character
+        let updatedHex = hexString
+            .slice(2) // Remove the "0x" prefix
+            .split("") // Split into individual characters
+            .map((char) => {
+                if (!hexChars.includes(char)) return char; // Skip invalid characters (e.g., "x")
+                const currentIndex = hexChars.indexOf(char); // Find current position in hexChars
+                return hexChars[(currentIndex + 1) % 16]; // Correctly increment by 1 and wrap around
+            })
+            .join(""); // Recombine into a single string
+    
+        updatedHex = "0x" + updatedHex; // Add "0x" prefix back
+        return updatedHex;
+    };
+    document.getElementById("ipfs").textContent = `${arrowFunc()}`;
 });
