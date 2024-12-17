@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Decentralized Identity Retrieval</title>
+    <title>Decentralized Identity Storage</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
 <body>
     <div class="container">
-        <h1>Decentralized Identity Retrieval</h1>
+        <h1>Decentralized Identity Storage</h1>
 
         <div class="input-section">
             <label for="userAddress">User Address:</label>
@@ -18,7 +18,7 @@
             <label for="dataType">Data Type:</label>
             <input type="text" id="dataType" placeholder="Enter type of data (e.g., identity, credentials)">
 
-            <button id="retrieveHash">Encrypt Data</button>
+            <button id="encryptData">Encrypt Data</button>
             <button id="clearFields">Send to IPFS</button>
         </div>
 
@@ -30,12 +30,13 @@
 
         <div class="key-section">
             <label for="publicKey">Public Key:</label>
-            <input type="text" id="publicKey" placeholder="Enter your Public key">
+            <p id="publicKey"></p>
 
-            <label for="signedMsg">Signed Message:</label>
-            <input type="text" id="signedMsg" placeholder="Enter your Signed Message">
+            <label for="ipfs">Signed Message:</label>
+            <p id="ipfs"></p>
+            
 
-            <button id="decryptData">Decrypt and View Data</button>
+            <button id="encryptHashKey">Encrypt hash key</button>
         </div>
     </div>
 </body>
