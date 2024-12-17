@@ -1,0 +1,44 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+debug.log
+
+# Cache directories
+.cache
+.tmp
+
+# IPFS artifacts
+ipfs/
+
+# Compiled Solidity files (build artifacts)
+build/
+*.json
+
+# VS Code files
+.vscode/
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# Mac system files
+*.swp
+*.sublime-workspace
+
+# IDE specific files
+.idea/
+*.iml
+
+#
