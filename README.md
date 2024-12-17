@@ -25,20 +25,21 @@ Additionally, the system ensures that no external entity can retain user data fo
 6. start the server in the given directory
 7. open local host at the set port to access your website
 ## Directory Structure
-- **.vscode/**  
-  Configuration files for Visual Studio Code to ensure consistency across development environments.
 
-- **Andres block chain model modified/**  
-  Contains modifications and updates to the blockchain model.
-
-- **DecentralizedIdentity-Backend/**  
-  Backend implementation for the platform, including APIs and server-side logic.
-
-- **frontendtest/**  
-  Files related to testing the frontend components.
-
-- **project-folder-with-ipfs/**  
-  Project files integrating IPFS (InterPlanetary File System) for decentralized storage.
-
-- **README.md**  
-  The project documentation file you’re currently reading.
+``` bash
+.
+├── .vscode/
+│   └── Configuration files for Visual Studio Code
+├── Andres block chain model modified/
+│   └── Contains modifications and updates to the blockchain model
+├── DecentralizedIdentity-Backend/
+│   └── Backend implementation for the platform
+│       ├── APIs
+│       └── Server-side logic
+├── frontendtest/
+│   └── Files related to testing frontend components
+├── project-folder-with-ipfs/
+│   └── Project files integrating IPFS for decentralized storage
+└── README.md
+    └── Project documentation file
+```
