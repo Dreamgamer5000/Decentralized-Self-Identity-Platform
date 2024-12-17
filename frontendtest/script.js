@@ -5,15 +5,18 @@ const database = {};
 function generateRandomHex(length) {
     let result = '';
     const hexChars = '0123456789abcdef';
-    const secretKey = Math.random()
+
     for (let i = 0; i < length; i++) {
-        result += hexChars[Math.floor(secretKey * 16)];
+        const randomIndex = Math.floor(Math.random() * 16); // Generate a random index (0-15)
+        result += hexChars[randomIndex]; // Append a random hex character
     }
-    return '0x' + result;
+
+    return '0x' + result; // Prefix with '0x' for a valid hex format
 }
 
+
 // Function to simulate retrieving encrypted data and generating/storing keys
-async function retrieveEncryptedData(userAddress, dataType, verifierAddress) {
+async function retrieveEncryptedData(userAddress, dataType) {
     console.log("Retrieving encrypted data...");
 
     // Replace this with actual blockchain interaction logic
@@ -27,11 +30,10 @@ async function retrieveEncryptedData(userAddress, dataType, verifierAddress) {
             database[userAddress] = {
                 publicKey,
                 signedMsg,
-                dataType,
-                verifierAddress,
+                dataType
             };
 
-            const encryptedData = `Public key: ${publicKey}\nSigned Message: ${signedMsg}`;
+            const encryptedData = ` Encrypted message: ${signedMsg}`;
             resolve({ encryptedData });
         }, 1000);
     });
@@ -64,15 +66,14 @@ function decryptData(encryptedData, signedMsgInput, publicKeyInput, userAddress)
 document.getElementById("retrieveHash").addEventListener("click", async () => {
     const userAddress = document.getElementById("userAddress").value;
     const dataType = document.getElementById("dataType").value;
-    const verifierAddress = document.getElementById("verifierAddress").value;
 
     // Validate input fields
-    if (!userAddress || !dataType || !verifierAddress) {
+    if (!userAddress || !dataType) {
         alert("Please fill in all fields.");
         return;
     }
 
-    const { encryptedData } = await retrieveEncryptedData(userAddress, dataType, verifierAddress);
+    const { encryptedData } = await retrieveEncryptedData(userAddress, dataType);
 
     // Display the encrypted data (do not auto-fill the public key)
     document.getElementById("output").textContent = encryptedData;
@@ -95,13 +96,14 @@ document.getElementById("decryptData").addEventListener("click", () => {
     document.getElementById("output").textContent = decryptedData;
 });
 
+const IPFShash = generateRandomHex(42);
 // Event listener for clearing all fields
 document.getElementById("clearFields").addEventListener("click", () => {
     document.getElementById("userAddress").value = "";
     document.getElementById("dataType").value = "";
-    document.getElementById("verifierAddress").value = "";
     document.getElementById("publicKey").value = "";
     document.getElementById("signedMsg").value = "";
-    document.getElementById("output").textContent = "No data retrieved yet.";
-    console.log("Cleared all fields.");
+    document.getElementById("output").textContent = IPFShash;
+
+    document.getElementById("output-heading").innerText = "IPFS HASH:"
 });
