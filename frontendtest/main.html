@@ -18,10 +18,14 @@
             <label for="dataType">Data Type:</label>
             <input type="text" id="dataType" placeholder="Enter type of data (e.g., identity, credentials)">
 
-            <label for="verifierAddress">Verifier Address:</label>
-            <input type="text" id="verifierAddress" placeholder="Enter your blockchain address">
+            <button id="retrieveHash">Encrypt Data</button>
+            <button id="clearFields">Send to IPFS</button>
+        </div>
 
-            <button id="retrieveHash">Retrieve Encrypted Data</button>
+
+        <div class="output-section">
+            <h2 id="output-heading">Encrypted Data:</h2>
+            <p id="output">No data retrieved yet.</p>
         </div>
 
         <div class="key-section">
@@ -32,12 +36,6 @@
             <input type="text" id="signedMsg" placeholder="Enter your Signed Message">
 
             <button id="decryptData">Decrypt and View Data</button>
-            <button id="clearFields">Clear</button>
-        </div>
-
-        <div class="output-section">
-            <h2>Retrieved Data:</h2>
-            <p id="output">No data retrieved yet.</p>
         </div>
     </div>
 </body>
